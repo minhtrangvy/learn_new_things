@@ -1,0 +1,51 @@
+## Key Airflow processes/terms
+1. executor
+1. queueing services
+1. scheduler
+1. web server
+1. airflow metastore
+  - stores all info of how each task, each run
+    - did it stay in the queue
+    - how long did it stay in the queue
+    - how long the task take
+    - the failure/success
+1. operator
+  - many different types of operators. i.e. bash operator
+1. DAG
+  - dependencies of tasks
+  - each DAG can be schedule based or API based
+
+## BI team's airflow architecture
+bi-workflow-manager
+-> job3 on bi-third-party queue
+  -> bi-third-party-loader
+-> job2 on bi-edw-loader queue
+  -> bi-edw-loader
+-> job4 and job1 on bi-edw-scheduler queue
+  -> bi-edw-loader
+
+- each role takes the task
+- each loader runs celery workers
+  - can be scaled vertically or horizontally
+
+## Defining a workflow
+### BI team set up
+bi-workflow-manager server
+- has a airflow server
+- has a celery server
+
+redis server
+RDS postgres server
+
+INSERT ARCHITECTURE PIC HERE
+
+### Steps
+1. Configure a DAG with its characteristic info
+1. Define tasks in this DAG and their characteristics
+1. Define dependencies to this tasks
+
+## Create a new airflow instance at Twilio
+1. airflow chef cookbook: bi-workflow-manager
+  - this will cook a airflow webserver, scheduler, and redis (queueing service) together in a host
+  - has a airflow-worker recipe which will cook airflow workers in a host
+1. All of these are using celery executor as the backend to orchestrate tasks
